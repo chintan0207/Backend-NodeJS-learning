@@ -49,7 +49,7 @@ router.post(
       const JWT_SECRET = process.env.JWT_SECRET;
       const authtoken = jwt.sign(data, JWT_SECRET);
       success = true;
-      res.json({ success, msg: "SignUp successfully", authtoken });
+      return res.json({ success, msg: "SignUp successfully", authtoken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Internal server error");
@@ -74,17 +74,23 @@ router.post(
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        res
+        return res
           .status(404)
-          .json({ error: "please try to login with correct credential" });
+          .json({
+            success,
+            error: "please try to login with correct credential",
+          });
       }
 
       const passwordcompare = await bcrypt.compare(password, user.password);
 
       if (!passwordcompare) {
-        res
+        return res
           .status(404)
-          .json({ error: "please try to login with correct credential" });
+          .json({
+            success,
+            error: "please try to login with correct credential",
+          });
       }
 
       const data = {
@@ -96,7 +102,7 @@ router.post(
       const JWT_SECRET = process.env.JWT_SECRET;
       const authtoken = jwt.sign(data, JWT_SECRET);
       success = true;
-      res.json({ success, msg: "logged in successfully", authtoken });
+      return res.json({ success, msg: "logged in successfully", authtoken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Internal server error");
